@@ -28,6 +28,7 @@ import org.dhis2.usescases.eventsWithoutRegistration.eventSummary.EventSummaryRe
 import org.dhis2.usescases.map.MapSelectorActivity;
 import org.dhis2.usescases.sms.SmsSubmitActivity;
 import org.dhis2.utils.Constants;
+import org.dhis2.utils.EventCreationType;
 import org.dhis2.utils.OrgUnitUtils;
 import org.dhis2.utils.Result;
 import org.hisp.dhis.android.core.D2;
@@ -51,6 +52,7 @@ import java.util.Map;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
@@ -310,8 +312,8 @@ public class EventInitialPresenter implements EventInitialContract.Presenter {
 
     @Override
     public void scheduleEventPermanent(String enrollmentUid, String trackedEntityInstanceUid, String programStageModel, Date dueDate, String orgUnitUid,
-                              String categoryOptionComboUid, String categoryOptionsUid,
-                              String latitude, String longitude) {
+                                       String categoryOptionComboUid, String categoryOptionsUid,
+                                       String latitude, String longitude) {
         if (programModel != null)
             compositeDisposable.add(
                     eventInitialRepository.scheduleEvent(enrollmentUid, null, view.getContext(), programModel.uid(),
@@ -414,16 +416,22 @@ public class EventInitialPresenter implements EventInitialContract.Presenter {
 
     @Override
     public void filterOrgUnits(String date) {
-        compositeDisposable.add(eventInitialRepository.filteredOrgUnits(date, programId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        orgUnits -> {
-                            this.orgUnits = orgUnits;
-                            view.addTree(OrgUnitUtils.renderTree(view.getContext(), orgUnits, true));
-                        },
-                        throwable -> view.showNoOrgUnits()
-                ));
+
+        Observable<List<OrganisationUnitModel>> orgUnitObservable =
+                view.eventcreateionType() != EventCreationType.REFERAL ? eventInitialRepository.filteredOrgUnits(date, programId) :
+                        eventInitialRepository.searchOrgUnits(date, programId);
+
+        compositeDisposable.add(
+                orgUnitObservable
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                orgUnits -> {
+                                    this.orgUnits = orgUnits;
+                                    view.addTree(OrgUnitUtils.renderTree(view.getContext(), orgUnits, true));
+                                },
+                                throwable -> view.showNoOrgUnits()
+                        ));
     }
 
     @Override
