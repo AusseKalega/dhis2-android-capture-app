@@ -191,7 +191,7 @@ class TEIDataPresenterImpl implements TEIDataContracts.Presenter {
                     Activity activity = view.getAbstractActivity();
                     Intent i = new Intent(activity, SmsSubmitActivity.class);
                     Bundle args = new Bundle();
-                    InputArguments.setEnrollmentData(args, teiUid, dashboardModel.getCurrentEnrollment().uid());
+                    InputArguments.setEnrollmentData(args, dashboardModel.getCurrentEnrollment().uid());
                     i.putExtras(args);
                     activity.startActivity(i);
                     return true;
@@ -236,12 +236,11 @@ class TEIDataPresenterImpl implements TEIDataContracts.Presenter {
 
     @Override
     public void onEventSelected(String uid, EventStatus eventStatus, View sharedView) {
-        if (eventStatus == EventStatus.ACTIVE || eventStatus == EventStatus.COMPLETED){
+        if (eventStatus == EventStatus.ACTIVE || eventStatus == EventStatus.COMPLETED) {
             Intent intent = new Intent(view.getContext(), EventCaptureActivity.class);
             intent.putExtras(EventCaptureActivity.getActivityBundle(uid, programUid));
             view.openEventCapture(intent);
-        }
-        else {
+        } else {
             Event event = d2.eventModule().events.uid(uid).get();
             Intent intent = new Intent(view.getContext(), EventInitialActivity.class);
             intent.putExtras(EventInitialActivity.getBundle(

@@ -6,12 +6,10 @@ public class InputArguments {
     private static String ARG_TRACKER_EVENT = "tracker_event";
     private static String ARG_SIMPLE_EVENT = "simple_event";
     private static String ARG_ENROLLMENT = "enrollment";
-    private static String ARG_TEI = "tei";
 
     private String simpleEventId;
     private String trackerEventId;
     private String enrollmentId;
-    private String teiId;
 
     public InputArguments(Bundle extras) {
         if (extras == null) {
@@ -20,7 +18,6 @@ public class InputArguments {
         simpleEventId = extras.getString(ARG_SIMPLE_EVENT);
         trackerEventId = extras.getString(ARG_TRACKER_EVENT);
         enrollmentId = extras.getString(ARG_ENROLLMENT);
-        teiId = extras.getString(ARG_TEI);
     }
 
     public static void setTrackerEventData(Bundle args, String eventId) {
@@ -31,9 +28,8 @@ public class InputArguments {
         args.putString(ARG_SIMPLE_EVENT, eventId);
     }
 
-    public static void setEnrollmentData(Bundle args, String teiId, String enrollmentId) {
+    public static void setEnrollmentData(Bundle args, String enrollmentId) {
         args.putString(ARG_ENROLLMENT, enrollmentId);
-        args.putString(ARG_TEI, teiId);
     }
 
     public String getSimpleEventId() {
@@ -48,12 +44,8 @@ public class InputArguments {
         return enrollmentId;
     }
 
-    public String getTeiId() {
-        return teiId;
-    }
-
     public Type getSubmissionType() {
-        if (enrollmentId != null && teiId != null && enrollmentId.length() > 0 && teiId.length() > 0) {
+        if (enrollmentId != null && enrollmentId.length() > 0) {
             return Type.ENROLLMENT;
         } else if (simpleEventId != null && simpleEventId.length() > 0) {
             return Type.SIMPLE_EVENT;
@@ -69,7 +61,7 @@ public class InputArguments {
         }
         switch (getSubmissionType()) {
             case ENROLLMENT:
-                return enrollmentId.equals(second.enrollmentId) && teiId.equals(second.teiId);
+                return enrollmentId.equals(second.enrollmentId);
             case TRACKER_EVENT:
                 return trackerEventId.equals(second.trackerEventId);
             case SIMPLE_EVENT:
