@@ -1,7 +1,6 @@
 package org.dhis2.usescases.eventsWithoutRegistration.eventInitial;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -26,7 +25,6 @@ import org.dhis2.data.tuples.Quintet;
 import org.dhis2.usescases.eventsWithoutRegistration.eventSummary.EventSummaryActivity;
 import org.dhis2.usescases.eventsWithoutRegistration.eventSummary.EventSummaryRepository;
 import org.dhis2.usescases.map.MapSelectorActivity;
-import org.dhis2.usescases.sms.SmsSubmitActivity;
 import org.dhis2.utils.Constants;
 import org.dhis2.utils.EventCreationType;
 import org.dhis2.utils.OrgUnitUtils;
@@ -79,15 +77,12 @@ public class EventInitialPresenter implements EventInitialContract.Presenter {
     private CategoryCombo catCombo;
     private String programId;
     private String programStageId;
-    private String teiId;
     private List<OrganisationUnitModel> orgUnits;
-    private D2 d2;
 
     public EventInitialPresenter(@NonNull EventSummaryRepository eventSummaryRepository,
                                  @NonNull EventInitialRepository eventInitialRepository,
                                  @NonNull MetadataRepository metadataRepository,
                                  @NonNull SchedulerProvider schedulerProvider, D2 d2) {
-        this.d2 = d2;
         this.metadataRepository = metadataRepository;
         this.eventInitialRepository = eventInitialRepository;
         this.eventSummaryRepository = eventSummaryRepository;
@@ -95,12 +90,11 @@ public class EventInitialPresenter implements EventInitialContract.Presenter {
     }
 
     @Override
-    public void init(EventInitialContract.View mview, String programId, String eventId, String orgInitId, String programStageId, String teiId) {
+    public void init(EventInitialContract.View mview, String programId, String eventId, String orgInitId, String programStageId) {
         view = mview;
         this.eventId = eventId;
         this.programId = programId;
         this.programStageId = programStageId;
-        this.teiId = teiId;
 
         compositeDisposable = new CompositeDisposable();
 
@@ -208,16 +202,7 @@ public class EventInitialPresenter implements EventInitialContract.Presenter {
 
     @Override
     public void onShareClick(View mView) {
-        Activity activity = view.getAbstractActivity();
-        Intent intent = new Intent(activity, SmsSubmitActivity.class);
-        Bundle args = new Bundle();
-        if (teiId != null) {
-            SmsSubmitActivity.setTrackerEventData(args, eventId, teiId);
-        } else {
-            SmsSubmitActivity.setSimpleEventData(args, eventId);
-        }
-        intent.putExtras(args);
-        activity.startActivity(intent);
+        view.runSmsSubmission();
     }
 
     @Override

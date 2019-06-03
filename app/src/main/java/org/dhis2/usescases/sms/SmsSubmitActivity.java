@@ -38,14 +38,11 @@ import java.util.List;
 import static org.dhis2.usescases.sms.SmsSendingService.*;
 
 public class SmsSubmitActivity extends ActivityGlobalAbstract {
-    private static String ARG_TEI = "tei";
-    private static String ARG_EVENT = "event";
-    private static String ARG_ENROLLMENT = "enrollment";
     private static String STATE_FINISHED = "submission_finished";
     private static String STATE_STATES_LIST = "states_list";
     private static final int SMS_PERMISSIONS_REQ_ID = 102;
 
-    private InputArguments inputArguments = new InputArguments(null, null, null);
+    private InputArguments inputArguments = new InputArguments(null);
     private SmsLogAdapter adapter;
     private View titleBar;
     private TextView state;
@@ -57,19 +54,6 @@ public class SmsSubmitActivity extends ActivityGlobalAbstract {
     private boolean submissionFinished = false;
     private SmsSendingService smsSendingService = null;
 
-    public static void setTrackerEventData(Bundle args, String eventId, String teiId) {
-        args.putString(ARG_EVENT, eventId);
-        args.putString(ARG_TEI, teiId);
-    }
-
-    public static void setSimpleEventData(Bundle args, String eventId) {
-        args.putString(ARG_EVENT, eventId);
-    }
-
-    public static void setEnrollmentData(Bundle args, String teiId, String enrollmentId) {
-        args.putString(ARG_ENROLLMENT, enrollmentId);
-        args.putString(ARG_TEI, teiId);
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,11 +68,7 @@ public class SmsSubmitActivity extends ActivityGlobalAbstract {
         recycler.setAdapter(adapter);
         recycler.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        Intent intent = getIntent();
-        inputArguments = new InputArguments(
-                intent.getStringExtra(ARG_EVENT),
-                intent.getStringExtra(ARG_ENROLLMENT),
-                intent.getStringExtra(ARG_TEI));
+        inputArguments = new InputArguments(getIntent().getExtras());
 
         TextView title = findViewById(R.id.smsLogTitle);
         title.setText(StatusText.getTextSubmissionType(getResources(), inputArguments));

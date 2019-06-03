@@ -80,10 +80,12 @@ public class EventInitialContract {
         void renderObjectStyle(ObjectStyleModel objectStyleModel);
 
         EventCreationType eventcreateionType();
+
+        void runSmsSubmission();
     }
 
     public interface Presenter extends AbstractActivityContracts.Presenter {
-        void init(EventInitialContract.View view, String programId, String eventId, String orgUnitId, String programStageId, String teiId);
+        void init(EventInitialContract.View view, String programId, String eventId, String orgUnitId, String programStageId);
 
         void getProgramStage(String programStageUid);
 

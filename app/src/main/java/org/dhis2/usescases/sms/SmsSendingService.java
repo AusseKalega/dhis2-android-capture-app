@@ -133,9 +133,9 @@ public class SmsSendingService extends Service {
             case ENROLLMENT:
                 return smsSender.convertEnrollment(inputArguments.getEnrollmentId(), inputArguments.getTeiId());
             case TRACKER_EVENT:
-                return smsSender.convertTrackerEvent(inputArguments.getEventId(), inputArguments.getTeiId());
+                return smsSender.convertTrackerEvent(inputArguments.getTrackerEventId(), inputArguments.getTeiId());//TODO remove tei
             case SIMPLE_EVENT:
-                return smsSender.convertSimpleEvent(inputArguments.getEventId());
+                return smsSender.convertSimpleEvent(inputArguments.getSimpleEventId());
             case WRONG_PARAMS:
                 reportState(State.ITEM_NOT_READY, 0, 0);
         }

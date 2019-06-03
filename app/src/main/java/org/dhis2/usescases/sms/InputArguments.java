@@ -1,19 +1,47 @@
 package org.dhis2.usescases.sms;
 
+import android.os.Bundle;
+
 public class InputArguments {
+    private static String ARG_TRACKER_EVENT = "tracker_event";
+    private static String ARG_SIMPLE_EVENT = "simple_event";
+    private static String ARG_ENROLLMENT = "enrollment";
+    private static String ARG_TEI = "tei";
 
-    private final String eventId;
-    private final String enrollmentId;
-    private final String teiId;
+    private String simpleEventId;
+    private String trackerEventId;
+    private String enrollmentId;
+    private String teiId;
 
-    public InputArguments(String eventId, String enrollmentId, String teiId) {
-        this.eventId = eventId;
-        this.enrollmentId = enrollmentId;
-        this.teiId = teiId;
+    public InputArguments(Bundle extras) {
+        if (extras == null) {
+            return;
+        }
+        simpleEventId = extras.getString(ARG_SIMPLE_EVENT);
+        trackerEventId = extras.getString(ARG_TRACKER_EVENT);
+        enrollmentId = extras.getString(ARG_ENROLLMENT);
+        teiId = extras.getString(ARG_TEI);
     }
 
-    public String getEventId() {
-        return eventId;
+    public static void setTrackerEventData(Bundle args, String eventId) {
+        args.putString(ARG_TRACKER_EVENT, eventId);
+    }
+
+    public static void setSimpleEventData(Bundle args, String eventId) {
+        args.putString(ARG_SIMPLE_EVENT, eventId);
+    }
+
+    public static void setEnrollmentData(Bundle args, String teiId, String enrollmentId) {
+        args.putString(ARG_ENROLLMENT, enrollmentId);
+        args.putString(ARG_TEI, teiId);
+    }
+
+    public String getSimpleEventId() {
+        return simpleEventId;
+    }
+
+    public String getTrackerEventId() {
+        return trackerEventId;
     }
 
     public String getEnrollmentId() {
@@ -27,10 +55,10 @@ public class InputArguments {
     public Type getSubmissionType() {
         if (enrollmentId != null && teiId != null && enrollmentId.length() > 0 && teiId.length() > 0) {
             return Type.ENROLLMENT;
-        } else if (eventId != null && teiId != null && eventId.length() > 0 && teiId.length() > 0) {
-            return Type.TRACKER_EVENT;
-        } else if (eventId != null && eventId.length() > 0) {
+        } else if (simpleEventId != null && simpleEventId.length() > 0) {
             return Type.SIMPLE_EVENT;
+        } else if (trackerEventId != null && trackerEventId.length() > 0) {
+            return Type.TRACKER_EVENT;
         }
         return Type.WRONG_PARAMS;
     }
@@ -43,9 +71,9 @@ public class InputArguments {
             case ENROLLMENT:
                 return enrollmentId.equals(second.enrollmentId) && teiId.equals(second.teiId);
             case TRACKER_EVENT:
-                return eventId.equals(second.eventId) && teiId.equals(second.teiId);
+                return trackerEventId.equals(second.trackerEventId);
             case SIMPLE_EVENT:
-                return eventId.equals(second.eventId);
+                return simpleEventId.equals(second.simpleEventId);
             case WRONG_PARAMS:
                 return true;
         }

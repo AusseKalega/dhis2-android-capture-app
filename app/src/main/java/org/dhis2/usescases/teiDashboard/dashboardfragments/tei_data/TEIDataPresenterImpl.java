@@ -11,6 +11,7 @@ import org.dhis2.data.metadata.MetadataRepository;
 import org.dhis2.usescases.eventsWithoutRegistration.eventCapture.EventCaptureActivity;
 import org.dhis2.usescases.eventsWithoutRegistration.eventInitial.EventInitialActivity;
 import org.dhis2.usescases.qrCodes.QrActivity;
+import org.dhis2.usescases.sms.InputArguments;
 import org.dhis2.usescases.sms.SmsSubmitActivity;
 import org.dhis2.usescases.teiDashboard.DashboardProgramModel;
 import org.dhis2.usescases.teiDashboard.DashboardRepository;
@@ -190,7 +191,7 @@ class TEIDataPresenterImpl implements TEIDataContracts.Presenter {
                     Activity activity = view.getAbstractActivity();
                     Intent i = new Intent(activity, SmsSubmitActivity.class);
                     Bundle args = new Bundle();
-                    SmsSubmitActivity.setEnrollmentData(args, teiUid, dashboardModel.getCurrentEnrollment().uid());
+                    InputArguments.setEnrollmentData(args, teiUid, dashboardModel.getCurrentEnrollment().uid());
                     i.putExtras(args);
                     activity.startActivity(i);
                     return true;
