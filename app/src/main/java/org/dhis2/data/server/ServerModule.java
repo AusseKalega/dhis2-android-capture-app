@@ -3,13 +3,18 @@ package org.dhis2.data.server;
 import android.content.Context;
 import android.os.Build;
 
-import com.facebook.stetho.okhttp3.StethoInterceptor;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import org.dhis2.R;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.google.common.collect.Lists;
+
 import org.dhis2.data.dagger.PerServer;
 import org.hisp.dhis.android.BuildConfig;
 import org.hisp.dhis.android.core.D2;
 import org.hisp.dhis.android.core.configuration.Configuration;
+import org.hisp.dhis.android.core.d2manager.D2Configuration;
+import org.hisp.dhis.android.core.d2manager.D2Manager;
 import org.hisp.dhis.android.core.data.api.Authenticator;
 import org.hisp.dhis.android.core.data.api.BasicAuthenticatorFactory;
 import org.hisp.dhis.android.core.data.database.DatabaseAdapter;
@@ -25,14 +30,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import androidx.annotation.NonNull;
 import dagger.Module;
 import dagger.Provides;
 import okhttp3.ConnectionSpec;
 import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.TlsVersion;
 import timber.log.Timber;
 
@@ -40,20 +43,44 @@ import timber.log.Timber;
 @PerServer
 public class ServerModule {
     private final Configuration configuration;
+    private final String serverUrl;
+    private final String databaseName;
+    private final boolean forceReconfiguration;
 
-    public ServerModule(@NonNull Configuration configuration) {
+    public ServerModule(Configuration configuration, @NonNull String serverUrl,
+                        @Nullable String databaseName,boolean forceConfiguration) {
         this.configuration = configuration;
+        this.serverUrl = serverUrl;
+        this.databaseName = databaseName;
+        this.forceReconfiguration = forceConfiguration;
     }
 
     @Provides
     @PerServer
     D2 sdk(DatabaseAdapter databaseAdapter, OkHttpClient client, Context context) {
-        return new D2.Builder()
+
+        D2Manager d2Manager = new D2Manager(D2Configuration.builder()
+                .appName("dhis2")
+                .databaseName(databaseName)
+                .appVersion(org.dhis2.BuildConfig.VERSION_NAME)
+                .readTimeoutInSeconds(120)
+                .connectTimeoutInSeconds(120)
+                .writeTimeoutInSeconds(120)
+                .networkInterceptors(Lists.newArrayList(new StethoInterceptor()))
+                .context(context)
+                .build());
+
+        if (!d2Manager.isD2Configured() || forceReconfiguration)
+            d2Manager.configureD2(serverUrl+"/");
+
+        return d2Manager.getD2();
+
+      /*  return new D2.Builder()
                 .configuration(configuration)
                 .databaseAdapter(databaseAdapter)
                 .okHttpClient(client)
                 .context(context)
-                .build();
+                .build();*/
     }
 
     @Provides

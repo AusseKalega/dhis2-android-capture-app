@@ -4,12 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Looper;
-import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.multidex.MultiDex;
+import androidx.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 import com.facebook.stetho.Stetho;
 import com.google.android.gms.security.ProviderInstaller;
-import com.mapbox.mapboxsdk.Mapbox;
 
 import org.dhis2.data.dagger.PerActivity;
 import org.dhis2.data.dagger.PerServer;
@@ -32,6 +36,7 @@ import org.dhis2.usescases.sync.SyncComponent;
 import org.dhis2.usescases.sync.SyncModule;
 import org.dhis2.usescases.teiDashboard.TeiDashboardComponent;
 import org.dhis2.usescases.teiDashboard.TeiDashboardModule;
+import org.dhis2.utils.Constants;
 import org.dhis2.utils.UtilsModule;
 import org.dhis2.utils.timber.DebugTree;
 import org.dhis2.utils.timber.ReleaseTree;
@@ -41,11 +46,6 @@ import org.hisp.dhis.android.core.configuration.ConfigurationManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.multidex.MultiDex;
-import androidx.multidex.MultiDexApplication;
 import io.fabric.sdk.android.Fabric;
 import io.ona.kujaku.KujakuLibrary;
 import io.reactivex.Scheduler;
@@ -166,10 +166,15 @@ public class App extends MultiDexApplication implements Components {
     }
 
     private void setUpServerComponent() {
-        Configuration configuration = configurationManager.get();
+       /* Configuration configuration = configurationManager.get();
         if (configuration != null) {
             serverComponent = appComponent.plus(new ServerModule(configuration));
-        }
+        }*/
+        if (getSharedPreferences(Constants.SHARE_PREFS, Context.MODE_PRIVATE).contains(Constants.SERVER))
+            serverComponent = appComponent.plus(new ServerModule(null,
+                    getSharedPreferences(Constants.SHARE_PREFS, Context.MODE_PRIVATE).getString(Constants.SERVER, ""),
+                    DATABASE_NAME,
+                    false));
     }
 
 
@@ -248,8 +253,8 @@ public class App extends MultiDexApplication implements Components {
     // Server component
     ////////////////////////////////////////////////////////////////////////
     @Override
-    public ServerComponent createServerComponent(@NonNull Configuration configuration) {
-        serverComponent = appComponent.plus(new ServerModule(configuration));
+    public ServerComponent createServerComponent(Configuration configuration, String serverUrl) {
+        serverComponent = appComponent.plus(new ServerModule(configuration, serverUrl, DATABASE_NAME,true));
         return serverComponent;
 
     }
