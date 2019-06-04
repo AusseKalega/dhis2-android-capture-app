@@ -2,11 +2,15 @@ package org.dhis2.usescases.main.program;
 
 import androidx.annotation.NonNull;
 
+import android.database.Cursor;
+
 import com.squareup.sqlbrite2.BriteDatabase;
 
 import org.hisp.dhis.android.core.D2;
 import org.hisp.dhis.android.core.arch.repositories.scope.RepositoryScope;
 import org.hisp.dhis.android.core.common.State;
+import org.hisp.dhis.android.core.dataset.DataSetElement;
+import org.hisp.dhis.android.core.datavalue.DataValue;
 import org.hisp.dhis.android.core.organisationunit.OrganisationUnit;
 import org.hisp.dhis.android.core.period.DatePeriod;
 
@@ -28,6 +32,69 @@ class HomeRepositoryImpl implements HomeRepository {
     HomeRepositoryImpl(BriteDatabase briteDatabase, D2 d2) {
         this.briteDatabase = briteDatabase;
         this.d2 = d2;
+    }
+
+    @NonNull
+    @Override
+    public Flowable<List<ProgramViewModel>> aggregatesModels(List<DatePeriod> dateFilter, final List<String> orgUnitFilter) {
+        final String GET_DATA_SETS = "SELECT " +
+                "DataValue.organisationUnit, " +
+                "DataValue.period, " +
+                "DataValue.attributeOptionCombo " +
+                "FROM DataValue " +
+                "JOIN DataSetDataElementLink " +
+                "ON DataSetDataElementLink.dataElement = DataValue.dataElement " +
+                "WHERE DataSetDataElementLink.dataSet = ? %s " +
+                "GROUP BY DataValue.period,DataValue.organisationUnit,DataValue.attributeOptionCombo";
+
+        final String DATA_SETS_ORG_UNIT_FILTER = "AND DataValue.organisationUnit IN (%s) ";
+
+        return Flowable.just(d2.dataSetModule().dataSets)
+                .flatMap(programRepo -> Flowable.fromIterable(programRepo.withAllChildren().get()))
+                .map(dataSet -> {
+                            String SQL = GET_DATA_SETS;
+                            String orgUnits = "";
+                            if (orgUnits != null && !orgUnits.isEmpty()) {
+                                StringBuilder orgUnitUids = new StringBuilder("");
+                                for (int i = 0; i < orgUnitFilter.size(); i++) {
+                                    orgUnitUids.append(orgUnitFilter.get(i));
+                                    if (i != orgUnitFilter.size() - 1)
+                                        orgUnitUids.append(",");
+                                }
+
+                                orgUnits = String.format(DATA_SETS_ORG_UNIT_FILTER, orgUnitFilter);
+                            }
+
+                            SQL = String.format(SQL, orgUnits);
+
+                            int count;
+                            try (Cursor dataSetCursor = briteDatabase.query(SQL, dataSet.uid())) {
+                                count = dataSetCursor.getCount();
+                            }
+
+                            State state = State.SYNCED;
+                            for(DataSetElement dataSetElement: dataSet.dataSetElements()){
+                                for(DataValue dataValue: d2.dataValueModule().dataValues.byDataElementUid().eq(dataSetElement.dataElement().uid()).get()){
+                                    if(dataValue.state() != State.SYNCED)
+                                        state = State.TO_UPDATE;
+                                }
+                            }
+
+                            return ProgramViewModel.create(
+                                    dataSet.uid(),
+                                    dataSet.displayName(),
+                                    dataSet.style() != null ? dataSet.style().color() : null,
+                                    dataSet.style() != null ? dataSet.style().icon() : null,
+                                    count,
+                                    null,
+                                    "DataSets",
+                                    "",
+                                    dataSet.displayDescription(),
+                                    true,
+                                    dataSet.access().data().write(),
+                                    state.name());
+                        }
+                ).toList().toFlowable();
     }
 
     @NonNull

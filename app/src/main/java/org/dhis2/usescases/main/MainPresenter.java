@@ -64,6 +64,19 @@ final class MainPresenter implements MainContracts.Presenter {
                         )
         );
 
+
+        compositeDisposable.add(
+                metadataRepository.getDefaultCategoryOptionComboId()
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(
+                                id -> {
+                                    SharedPreferences prefs = view.getAbstracContext().getSharedPreferences(
+                                            Constants.SHARE_PREFS, Context.MODE_PRIVATE);
+                                    prefs.edit().putString(Constants.PREF_DEFAULT_CAT_OPTION_COMBO, id).apply();
+                                },
+                                Timber::e
+                        )
+        );
     }
 
     @Override

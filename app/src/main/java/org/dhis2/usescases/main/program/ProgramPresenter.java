@@ -25,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.processors.FlowableProcessor;
@@ -68,7 +69,13 @@ public class ProgramPresenter implements ProgramContract.Presenter {
         compositeDisposable.add(
                 programQueries
                         .startWith(Pair.create(currentDateFilter, currentOrgUnitFilter))
-                        .flatMap(datePeriodOrgs -> homeRepository.programModels(datePeriodOrgs.val0(), datePeriodOrgs.val1()))
+                        .flatMap(datePeriodOrgs -> Flowable.zip(homeRepository.programModels(datePeriodOrgs.val0(), datePeriodOrgs.val1()),
+                                homeRepository.aggregatesModels(datePeriodOrgs.val0(), datePeriodOrgs.val1()), (programs, dataSets) -> {
+                                    //programs.addAll(dataSets);
+                                    programs.clear();
+                                    programs.addAll(dataSets);
+                                    return programs;
+                                }))
                         .subscribeOn(Schedulers.from(executorService))
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
@@ -125,7 +132,10 @@ public class ProgramPresenter implements ProgramContract.Presenter {
 
     @Override
     public void onSyncStatusClick(ProgramViewModel program) {
-        view.showSyncDialog(program.id(), SyncStatusDialog.ConflictType.PROGRAM);
+        if(!program.typeName().equals("DataSets"))
+            view.showSyncDialog(program.id(), SyncStatusDialog.ConflictType.PROGRAM);
+        else
+            view.showSyncDialog(program.id(), SyncStatusDialog.ConflictType.DATA_SET);
     }
 
     @Override
@@ -148,7 +158,8 @@ public class ProgramPresenter implements ProgramContract.Presenter {
             idTag = "PROGRAM_UID";
 
         bundle.putString(idTag, programModel.id());
-
+        bundle.putString(Constants.DATA_SET_NAME, programModel.title());
+        bundle.putString(Constants.ACCESS_DATA, programModel.accessDataWrite().toString());
         int programTheme = ColorUtils.getThemeFromColor(programModel.color());
         SharedPreferences prefs = view.getAbstracContext().getSharedPreferences(
                 Constants.SHARE_PREFS, Context.MODE_PRIVATE);

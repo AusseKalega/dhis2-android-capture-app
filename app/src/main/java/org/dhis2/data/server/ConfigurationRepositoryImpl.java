@@ -19,11 +19,12 @@ public class ConfigurationRepositoryImpl implements ConfigurationRepository {
     @NonNull
     @Override
     public Observable<Configuration> configure(@NonNull HttpUrl baseUrl) {
+
         return Observable.defer(() -> Observable.fromCallable(
                 () -> {
                     Configuration configuration = Configuration.builder().serverUrl(baseUrl).build();
                     configurationManager.configure(configuration);
-                    return configuration;
+                    return configurationManager.get();
                 }));
     }
 

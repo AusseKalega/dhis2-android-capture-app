@@ -58,14 +58,17 @@ public class Constants {
     public static final String SERVER = "SERVER";
     public static final String THEME = "THEME";
     public static final String DATA_SET_UID = "DATA_SET_UID";
+    public static final String DATA_SET_NAME = "DATA_SET_NAME";
     public static final int DESCRIPTION_DIALOG = 111;
     public static final String PERIOD_TYPE = "PERIOD_TYPE";
+    public static final String PERIOD_ID = "PERIOD_ID";
     public static final String PERIOD_TYPE_DATE = "PERIOD_TYPE_DATE";
     public static final String CAT_COMB = "CAT_COMB";
     public static final String DEFAULT_CAT_COMBO = "DEFAULT_CAT_COMB";
     public static final String DATA_SET_SECTION = "DATA_SET_SECTION";
     public static final String PROGRAM_STAGE_UID = "PROGRAM_STAGE_UID";
     public static final String EXTRA_FROM_LOGIN = "EXTRA_FROM_LOGIN";
+    public static final String PREF_DEFAULT_CAT_OPTION_COMBO = "PREF_DEFAULT_CAT_OPTION_COMBO";
     public static final int RQ_MANDATORY_EVENTS = 2001;
     public static final String OPTION_SET_DIALOG_THRESHOLD = "optionSetDialogThredshold";
     public static final String URL_TEST_229 = "https://play.dhis2.org/android-previous1";
@@ -96,6 +99,7 @@ public class Constants {
     public static final String SCHEDULENEW = "SCHEDULENEW";
     public static final String PROGRAM_UID = "PROGRAM_UID";
     public static final String ORG_UNIT = "ORG_UNIT";
+    public static final String ORG_UNIT_NAME = "ORG_UNIT_NAME";
     public static final String ONE_TIME = "ONE_TIME";
     public static final String PERMANENT = "PERMANENT";
     public static final String ENROLLMENT_UID = "ENROLLMENT_UID";
@@ -115,6 +119,7 @@ public class Constants {
     public static final String JIRA_AUTH = "JIRA_AUTH";
     public static final String JIRA_USER = "JIRA_USER";
 
+    public static final String ACCESS_DATA = "access_data";
     private Constants() {
         // hide public constructor
     }

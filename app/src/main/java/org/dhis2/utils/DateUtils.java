@@ -1,5 +1,6 @@
 package org.dhis2.utils;
 
+import org.hisp.dhis.android.core.dataset.DataInputPeriodModel;
 import org.hisp.dhis.android.core.event.EventModel;
 import org.hisp.dhis.android.core.event.EventStatus;
 import org.hisp.dhis.android.core.period.DatePeriod;
@@ -1053,6 +1054,47 @@ public class DateUtils {
         } else
             return expiredBecouseOfCompletion;
 
+    }
+
+
+    public Boolean isDataSetExpired(int expiredDays, Date periodInitialDate){
+        return Calendar.getInstance().getTime().getTime() > periodInitialDate.getTime() + TimeUnit.DAYS.toMillis(expiredDays);
+    }
+
+    public Boolean isInsideInputPeriod(DataInputPeriodModel dataInputPeriodModel){
+        if(dataInputPeriodModel.openingDate() == null && dataInputPeriodModel.closingDate() != null)
+            return Calendar.getInstance().getTime().getTime() < dataInputPeriodModel.closingDate().getTime();
+
+        if(dataInputPeriodModel.openingDate() != null && dataInputPeriodModel.closingDate() == null)
+            return dataInputPeriodModel.openingDate().getTime() < Calendar.getInstance().getTime().getTime();
+
+        if(dataInputPeriodModel.openingDate() == null && dataInputPeriodModel.closingDate() == null)
+            return true;
+
+        return dataInputPeriodModel.openingDate().getTime() < Calendar.getInstance().getTime().getTime()
+                && Calendar.getInstance().getTime().getTime() < dataInputPeriodModel.closingDate().getTime();
+    }
+
+    public String generateId(PeriodType periodType, Date date, Locale locale) {
+
+        String formattedDate;
+        Date initDate = getNextPeriod(periodType, date, 0);
+
+        switch (periodType) {
+            case Monthly:
+                formattedDate = new SimpleDateFormat("yyyyMM", locale).format(initDate);
+                break;
+            case Yearly:
+                formattedDate = new SimpleDateFormat("yyyy", locale).format(initDate);
+                break;
+            case Daily:
+                formattedDate = new SimpleDateFormat("yyyyMMdd", locale).format(initDate);
+                break;
+            default:
+                formattedDate = new SimpleDateFormat("yyyy", locale).format(initDate);
+                break;
+        }
+        return formattedDate;
     }
 
     public List<DatePeriod> getDatePeriodListFor(List<Date> selectedDates, Period period) {

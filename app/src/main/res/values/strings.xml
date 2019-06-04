@@ -135,7 +135,10 @@
     <!--DataSet initial-->
     <string name="report_period">Report period</string>
     <string name="cat_option">Cat option</string>
-
+    <string name="field_required">If you set a value, the whole row needs all of values to complete the Data Set.</string>
+    <string name="field_mandatory">Some values required are missing. You need set mandatory values to complete the Data Set.</string>
+    <string name="datavalue_saved">Value is saved!</string>
+    <string name="there_is_no_available_period">There is no available periods to select.</string>
     <!--Event Detail-->
     <string name="event_date">Event date</string>
     <string name="due_date">Due date</string>
@@ -146,6 +149,7 @@
     <string name="delete_event">Delete event</string>
     <string name="confirm_delete_event">Are you sure that you want to delete this event?</string>
     <string name="event_was_deleted">Event deleted successfully</string>
+    <string name="total">Total</string>
 
     <!--TEI Enrollment list-->
     <string name="enrollment_list">Enrollment List</string>
@@ -437,6 +441,8 @@
     <string name="biometrics_first_use_text">To be able to log in using the fingerprint scanner you first need to use the default way</string>
     <string name="biometrics_security_title">Biometric Security</string>
     <string name="biometrics_security_text">Use your fingerprint to log in with this user?</string>
+    <string name="tab_tables">Tables</string>
+    <string name="table">Table</string>
     <string name="login_https">https://</string>
     <string name="delete_local_data_message">Non synchronized data will be lost. Do you really want to continue?</string>
     <string name="local_data_accept">Accept</string>
@@ -465,7 +471,9 @@
     <string name="no_conflicts_update_message">This data is stored in your device only, it is not synced with the server.</string>
     <string name="no_conflicts_synced_message">You are up to date! All your data is sent to the server.</string>
     <string name="relationship_error_recursive">You can\'t relate a record with itself</string>
-    <string name="unblock_session">Unblock session</string>
+    <string name="data_set_closed">Close</string>
+    <string name="data_set_open">Open</string>
+    <string name="unsupported_value_type">Unsupported value type</string>
 
     <string name="sms_receiver_number">Receiver number</string>
     <string name="sms_amount_question">Do you accept to send %d messages?</string>

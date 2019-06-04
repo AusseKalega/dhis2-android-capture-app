@@ -70,12 +70,10 @@ public class DateTimeView extends FieldLayout implements View.OnClickListener, V
 
     public void setLabel(String label) {
         binding.setLabel(label);
-        binding.executePendingBindings();
     }
 
     public void setDescription(String description) {
         binding.setDescription(description);
-        binding.executePendingBindings();
     }
 
     public void initData(String data) {

@@ -47,6 +47,13 @@ final class SyncPresenterImpl implements SyncPresenter {
     }
 
     @Override
+    public void syncAndDownloadDataValues() throws Exception {
+        d2.dataValueModule().dataValues.upload().call();
+        d2.dataSetModule().dataSetCompleteRegistrations.upload().call();
+        Completable.fromObservable(d2.aggregatedModule().data().download().asObservable()).blockingAwait();
+    }
+
+    @Override
     public void syncMetadata(Context context) throws Exception {
         d2.syncMetaData().call();
     }

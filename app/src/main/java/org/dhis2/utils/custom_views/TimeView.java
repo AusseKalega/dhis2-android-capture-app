@@ -7,6 +7,8 @@ import android.text.format.DateFormat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -14,6 +16,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.dhis2.BR;
 import org.dhis2.R;
 import org.dhis2.data.forms.dataentry.fields.datetime.OnDateSelected;
+import org.dhis2.databinding.CustomCellViewBinding;
+import org.dhis2.usescases.datasets.dataSetTable.dataSetSection.DataSetTableAdapter;
 import org.dhis2.utils.DateUtils;
 
 import java.text.ParseException;
@@ -23,6 +27,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableField;
 import androidx.databinding.ViewDataBinding;
 import timber.log.Timber;
 
@@ -72,6 +77,16 @@ public class TimeView extends FieldLayout implements View.OnClickListener {
         editText.setOnClickListener(this);
     }
 
+    public void setCellLayout(ObservableField<DataSetTableAdapter.TableScale> tableScale){
+        binding = DataBindingUtil.inflate(inflater, R.layout.custom_cell_view, this, true);
+        ((CustomCellViewBinding)binding).setTableScale(tableScale);
+        editText = findViewById(R.id.inputEditText);
+        editText.setFocusable(false); //Makes editText not editable
+        editText.setClickable(true);//  but clickable
+        editText.setOnFocusChangeListener(this::onFocusChanged);
+        editText.setOnClickListener(this);
+    }
+
     public void setIsBgTransparent(boolean isBgTransparent) {
         this.isBgTransparent = isBgTransparent;
         setLayout();
@@ -112,6 +127,11 @@ public class TimeView extends FieldLayout implements View.OnClickListener {
     public void setError(String msg) {
         inputLayout.setErrorTextAppearance(R.style.error_appearance);
         inputLayout.setError(msg);
+    }
+
+    public void setMandatory(){
+        ImageView mandatory = binding.getRoot().findViewById(R.id.ic_mandatory);
+        mandatory.setVisibility(View.VISIBLE);
     }
 
     public void setDateListener(OnDateSelected listener) {
