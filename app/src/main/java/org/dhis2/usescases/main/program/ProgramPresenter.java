@@ -71,8 +71,6 @@ public class ProgramPresenter implements ProgramContract.Presenter {
                         .startWith(Pair.create(currentDateFilter, currentOrgUnitFilter))
                         .flatMap(datePeriodOrgs -> Flowable.zip(homeRepository.programModels(datePeriodOrgs.val0(), datePeriodOrgs.val1()),
                                 homeRepository.aggregatesModels(datePeriodOrgs.val0(), datePeriodOrgs.val1()), (programs, dataSets) -> {
-                                    //programs.addAll(dataSets);
-                                    programs.clear();
                                     programs.addAll(dataSets);
                                     return programs;
                                 }))
@@ -132,7 +130,7 @@ public class ProgramPresenter implements ProgramContract.Presenter {
 
     @Override
     public void onSyncStatusClick(ProgramViewModel program) {
-        if(!program.typeName().equals("DataSets"))
+        if (!program.typeName().equals("DataSets"))
             view.showSyncDialog(program.id(), SyncStatusDialog.ConflictType.PROGRAM);
         else
             view.showSyncDialog(program.id(), SyncStatusDialog.ConflictType.DATA_SET);
