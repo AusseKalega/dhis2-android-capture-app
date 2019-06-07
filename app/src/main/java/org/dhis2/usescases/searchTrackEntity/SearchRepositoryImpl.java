@@ -23,7 +23,7 @@ import org.hisp.dhis.android.core.D2;
 import org.hisp.dhis.android.core.common.BaseIdentifiableObject;
 import org.hisp.dhis.android.core.common.ObjectStyleModel;
 import org.hisp.dhis.android.core.common.State;
-import org.hisp.dhis.android.core.data.api.OuMode;
+import org.hisp.dhis.android.core.organisationunit.OrganisationUnitMode;
 import org.hisp.dhis.android.core.enrollment.EnrollmentModel;
 import org.hisp.dhis.android.core.enrollment.EnrollmentStatus;
 import org.hisp.dhis.android.core.event.EventStatus;
@@ -495,7 +495,7 @@ public class SearchRepositoryImpl implements SearchRepository {
         if (selectedProgram != null)
             builder.program(selectedProgram.uid());
         builder.orgUnits(orgUnits);
-        builder.orgUnitMode(OuMode.ACCESSIBLE);
+        builder.orgUnitMode(OrganisationUnitMode.ACCESSIBLE);
         builder.pageSize(50);
         builder.page(1);
         builder.paging(true);
