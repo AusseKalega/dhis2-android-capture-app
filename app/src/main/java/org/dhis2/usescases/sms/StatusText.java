@@ -33,6 +33,8 @@ public class StatusText {
         switch (inputArguments.getSubmissionType()) {
             case ENROLLMENT:
                 return r.getString(R.string.sms_title_enrollment);
+            case DATA_SET:
+                return r.getString(R.string.sms_title_data_set);
             case SIMPLE_EVENT:
             case TRACKER_EVENT:
                 return r.getString(R.string.sms_title_event);

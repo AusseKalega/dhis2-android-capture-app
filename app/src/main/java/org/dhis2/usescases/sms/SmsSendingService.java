@@ -29,6 +29,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class SmsSendingService extends Service {
     private final IBinder binder = new LocalBinder();
@@ -136,6 +137,10 @@ public class SmsSendingService extends Service {
                 return smsSender.convertTrackerEvent(inputArguments.getTrackerEventId());
             case SIMPLE_EVENT:
                 return smsSender.convertSimpleEvent(inputArguments.getSimpleEventId());
+            case DATA_SET:
+                return smsSender.convertDataSet(inputArguments.getOrgUnit(),
+                        inputArguments.getPeriod(),
+                        inputArguments.getAttributeOptionCombo());
             case WRONG_PARAMS:
                 reportState(State.ITEM_NOT_READY, 0, 0);
         }
@@ -154,6 +159,7 @@ public class SmsSendingService extends Service {
     }
 
     private void reportError(Throwable throwable) {
+        Timber.tag(SmsSendingService.class.getSimpleName()).e(throwable);
         statesList.add(new SendingStatus(State.ERROR, throwable, 0, 0));
         states.postValue(statesList);
     }

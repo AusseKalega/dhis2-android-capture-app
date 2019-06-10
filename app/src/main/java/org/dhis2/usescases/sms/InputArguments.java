@@ -6,10 +6,16 @@ public class InputArguments {
     private static String ARG_TRACKER_EVENT = "tracker_event";
     private static String ARG_SIMPLE_EVENT = "simple_event";
     private static String ARG_ENROLLMENT = "enrollment";
+    private static String ARG_ORG_UNIT = "org_unit";
+    private static String ARG_PERIOD = "period";
+    private static String ARG_ATTRIBUTE = "attribute";
 
     private String simpleEventId;
     private String trackerEventId;
     private String enrollmentId;
+    private String orgUnit;
+    private String period;
+    private String attributeOptionCombo;
 
     public InputArguments(Bundle extras) {
         if (extras == null) {
@@ -18,6 +24,9 @@ public class InputArguments {
         simpleEventId = extras.getString(ARG_SIMPLE_EVENT);
         trackerEventId = extras.getString(ARG_TRACKER_EVENT);
         enrollmentId = extras.getString(ARG_ENROLLMENT);
+        orgUnit = extras.getString(ARG_ORG_UNIT);
+        period = extras.getString(ARG_PERIOD);
+        attributeOptionCombo = extras.getString(ARG_ATTRIBUTE);
     }
 
     public static void setTrackerEventData(Bundle args, String eventId) {
@@ -32,6 +41,12 @@ public class InputArguments {
         args.putString(ARG_ENROLLMENT, enrollmentId);
     }
 
+    public static void setDataSet(Bundle args, String orgUnit, String period, String attributeOptionCombo) {
+        args.putString(ARG_ORG_UNIT, orgUnit);
+        args.putString(ARG_PERIOD, period);
+        args.putString(ARG_ATTRIBUTE, attributeOptionCombo);
+    }
+
     public String getSimpleEventId() {
         return simpleEventId;
     }
@@ -44,6 +59,18 @@ public class InputArguments {
         return enrollmentId;
     }
 
+    public String getOrgUnit() {
+        return orgUnit;
+    }
+
+    public String getPeriod() {
+        return period;
+    }
+
+    public String getAttributeOptionCombo() {
+        return attributeOptionCombo;
+    }
+
     public Type getSubmissionType() {
         if (enrollmentId != null && enrollmentId.length() > 0) {
             return Type.ENROLLMENT;
@@ -51,6 +78,10 @@ public class InputArguments {
             return Type.SIMPLE_EVENT;
         } else if (trackerEventId != null && trackerEventId.length() > 0) {
             return Type.TRACKER_EVENT;
+        } else if (orgUnit != null && orgUnit.length() > 0 &&
+                period != null && period.length() > 0 &&
+                attributeOptionCombo != null && attributeOptionCombo.length() > 0) {
+            return Type.DATA_SET;
         }
         return Type.WRONG_PARAMS;
     }
@@ -73,6 +104,6 @@ public class InputArguments {
     }
 
     public enum Type {
-        ENROLLMENT, TRACKER_EVENT, SIMPLE_EVENT, WRONG_PARAMS
+        ENROLLMENT, TRACKER_EVENT, SIMPLE_EVENT, DATA_SET, WRONG_PARAMS
     }
 }
