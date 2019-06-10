@@ -138,7 +138,9 @@ public class SmsSendingService extends Service {
             case SIMPLE_EVENT:
                 return smsSender.convertSimpleEvent(inputArguments.getSimpleEventId());
             case DATA_SET:
-                return smsSender.convertDataSet(inputArguments.getOrgUnit(),
+                return smsSender.convertDataSet(
+                        inputArguments.getDataSet(),
+                        inputArguments.getOrgUnit(),
                         inputArguments.getPeriod(),
                         inputArguments.getAttributeOptionCombo());
             case WRONG_PARAMS:

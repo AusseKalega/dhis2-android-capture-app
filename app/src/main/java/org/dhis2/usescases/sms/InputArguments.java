@@ -9,6 +9,7 @@ public class InputArguments {
     private static String ARG_ORG_UNIT = "org_unit";
     private static String ARG_PERIOD = "period";
     private static String ARG_ATTRIBUTE = "attribute";
+    private static String ARG_DATA_SET = "dataset";
 
     private String simpleEventId;
     private String trackerEventId;
@@ -16,6 +17,7 @@ public class InputArguments {
     private String orgUnit;
     private String period;
     private String attributeOptionCombo;
+    private String dataSet;
 
     public InputArguments(Bundle extras) {
         if (extras == null) {
@@ -27,6 +29,7 @@ public class InputArguments {
         orgUnit = extras.getString(ARG_ORG_UNIT);
         period = extras.getString(ARG_PERIOD);
         attributeOptionCombo = extras.getString(ARG_ATTRIBUTE);
+        dataSet = extras.getString(ARG_DATA_SET);
     }
 
     public static void setTrackerEventData(Bundle args, String eventId) {
@@ -41,10 +44,11 @@ public class InputArguments {
         args.putString(ARG_ENROLLMENT, enrollmentId);
     }
 
-    public static void setDataSet(Bundle args, String orgUnit, String period, String attributeOptionCombo) {
+    public static void setDataSet(Bundle args, String dataSet, String orgUnit, String period, String attributeOptionCombo) {
         args.putString(ARG_ORG_UNIT, orgUnit);
         args.putString(ARG_PERIOD, period);
         args.putString(ARG_ATTRIBUTE, attributeOptionCombo);
+        args.putString(ARG_DATA_SET, dataSet);
     }
 
     public String getSimpleEventId() {
@@ -71,6 +75,10 @@ public class InputArguments {
         return attributeOptionCombo;
     }
 
+    public String getDataSet() {
+        return dataSet;
+    }
+
     public Type getSubmissionType() {
         if (enrollmentId != null && enrollmentId.length() > 0) {
             return Type.ENROLLMENT;
@@ -80,7 +88,8 @@ public class InputArguments {
             return Type.TRACKER_EVENT;
         } else if (orgUnit != null && orgUnit.length() > 0 &&
                 period != null && period.length() > 0 &&
-                attributeOptionCombo != null && attributeOptionCombo.length() > 0) {
+                attributeOptionCombo != null && attributeOptionCombo.length() > 0 &&
+                dataSet != null && dataSet.length() > 0) {
             return Type.DATA_SET;
         }
         return Type.WRONG_PARAMS;

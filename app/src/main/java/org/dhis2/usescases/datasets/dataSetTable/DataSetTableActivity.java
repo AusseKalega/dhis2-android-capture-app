@@ -232,7 +232,7 @@ public class DataSetTableActivity extends ActivityGlobalAbstract implements Data
     public void runSmsSubmission() {
         Intent intent = new Intent(this, SmsSubmitActivity.class);
         Bundle args = new Bundle();
-        InputArguments.setDataSet(args, orgUnitUid, periodId, catOptCombo);
+        InputArguments.setDataSet(args, dataSetUid, orgUnitUid, periodId, catOptCombo);
         intent.putExtras(args);
         startActivity(intent);
     }
